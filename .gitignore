@@ -3,3 +3,5 @@
 ################################################################################
 
 /Solution/bin/Debug/netcoreapp1.1
+/Solution/obj
+/Solution/.vs/WebApiQueryMongoDb/v15/.suo
