@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using WebApiQueryMongoDb.Model;
 
 namespace WebApiQueryMongoDb.Data
@@ -15,11 +16,11 @@ namespace WebApiQueryMongoDb.Data
                 _database = client.GetDatabase(settings.Value.Database);
         }
 
-        public IMongoCollection<TravelItem> TravelItems
+        public IMongoQueryable<TravelItem> TravelItems
         {
             get
             {
-                return _database.GetCollection<TravelItem>("WikiVoyage");
+                return _database.GetCollection<TravelItem>("WikiVoyage").AsQueryable<TravelItem>();
             }
         }
     }

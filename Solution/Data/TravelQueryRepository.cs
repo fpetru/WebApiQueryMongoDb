@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 using WebApiQueryMongoDb.Interfaces;
 using WebApiQueryMongoDb.Model;
@@ -23,7 +24,8 @@ namespace WebApiQueryMongoDb.Data
         {
             try
             {
-                return await _context.TravelItems.Find(_ => true).Limit(50).ToListAsync();
+                return await _context.TravelItems
+                    .Take(500).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -34,13 +36,14 @@ namespace WebApiQueryMongoDb.Data
 
         public async Task<TravelItem> GetTravelItem(string id)
         {
-            var filter = Builders<TravelItem>.Filter.Eq("Id", id);
-
             try
             {
-                return await _context.TravelItems
-                                .Find(filter)
-                                .FirstOrDefaultAsync();
+                // TODO: This is not correct
+                //return await _context.TravelItems
+                //                .Where(p => p.Id == id)
+                //                .FirstOrDefaultAsync();
+
+                return null;
             }
             catch (Exception ex)
             {
