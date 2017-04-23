@@ -20,12 +20,46 @@ namespace WebApiQueryMongoDb.Data
             _context = new TravelQueryContext(settings);
         }
 
-        public async Task<IEnumerable<TravelItem>> GetAllTravelItems()
+        public async Task<IEnumerable<TravelItem>> GetTravelItems()
+        {
+            try
+            {
+                return await _context.TravelItems.Take(500).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<TravelItem>> GetTravelItems(string cityName, string action)
+        {
+            try
+            {
+                if (action != null)
+                    return await _context.TravelItems
+                        .Where(p => p.City == cityName && p.Action == action).ToListAsync();
+
+                return await _context.TravelItems.Where(p => p.City == cityName)
+                    .OrderBy(p => p.Action)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<object>> GroupTravelItems(string cityName)
         {
             try
             {
                 return await _context.TravelItems
-                    .Take(500).ToListAsync();
+                                    .Where(p => p.City == cityName)
+                                    .GroupBy(grp => new { grp.City, grp.Action })
+                                    .Select(g => new { g.Key.City, g.Key.Action }).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -33,24 +67,5 @@ namespace WebApiQueryMongoDb.Data
                 throw ex;
             }
         }
-
-        public async Task<TravelItem> GetTravelItem(string id)
-        {
-            try
-            {
-                // TODO: This is not correct
-                //return await _context.TravelItems
-                //                .Where(p => p.Id == id)
-                //                .FirstOrDefaultAsync();
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                // log or manage the exception
-                throw ex;
-            }
-        }
-
     }
 }

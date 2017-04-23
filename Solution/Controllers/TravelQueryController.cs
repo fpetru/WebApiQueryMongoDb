@@ -23,24 +23,25 @@ namespace WebApiQueryMongoDb.Controllers
         [HttpGet]
         public Task<IEnumerable<TravelItem>> Get()
         {
-            return GetTravelItemInternal();
+            return GetTravelItemsInternal();
         }
 
-        private async Task<IEnumerable<TravelItem>> GetTravelItemInternal()
+        private async Task<IEnumerable<TravelItem>> GetTravelItemsInternal()
         {
-            return await _travelItemRepository.GetAllTravelItems();
+            return await _travelItemRepository.GetTravelItems();
         }
 
-        // GET api/notes/5
-        [HttpGet("{id}")]
-        public Task<TravelItem> Get(string id)
+        // GET api/TravelQuery/Paris?doAction=do
+        [NoCache]
+        [HttpGet("{city}")]
+        public Task<IEnumerable<TravelItem>> Get(string city, [FromQuery]string doAction)
         {
-            return GetTravelItemByIdInternal(id);
+            return GetTravelItemsInternal(city, doAction);
         }
 
-        private async Task<TravelItem> GetTravelItemByIdInternal(string id)
+        private async Task<IEnumerable<TravelItem>> GetTravelItemsInternal(string city, string action)
         {
-            return await _travelItemRepository.GetTravelItem(id) ?? new TravelItem();
+            return await _travelItemRepository.GetTravelItems(city, action);
         }
     }
 }
