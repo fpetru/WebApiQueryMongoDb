@@ -23,5 +23,13 @@ namespace WebApiQueryMongoDb.Data
                 return _database.GetCollection<TravelItem>("WikiVoyage").AsQueryable<TravelItem>();
             }
         }
+
+        public IMongoQueryable<City> Cities
+        {
+            get
+            {
+                return _database.GetCollection<City>("Cities").AsQueryable<City>();
+            }
+        }
     }
 }

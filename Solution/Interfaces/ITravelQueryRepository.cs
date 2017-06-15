@@ -11,5 +11,6 @@ namespace WebApiQueryMongoDb.Interfaces
         Task<IEnumerable<TravelItem>> GetTravelItems();
         Task<IEnumerable<TravelItem>> GetTravelItems(string cityName, string action);
         Task<IEnumerable<object>> GroupTravelItems(string cityName);
+        Task<IEnumerable<City>> GetCities(string countryCode, int minPopulation = 0);
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiQueryMongoDb.Interfaces;
 using WebApiQueryMongoDb.Model;
 using WebApiQueryMongoDb.Infrastructure;
-using System;
 using System.Collections.Generic;
 
 namespace WebApiQueryMongoDb.Controllers

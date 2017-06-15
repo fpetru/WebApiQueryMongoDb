@@ -7,7 +7,6 @@ using MongoDB.Driver.Linq;
 
 using WebApiQueryMongoDb.Interfaces;
 using WebApiQueryMongoDb.Model;
-using MongoDB.Bson;
 
 namespace WebApiQueryMongoDb.Data
 {
@@ -60,6 +59,21 @@ namespace WebApiQueryMongoDb.Data
                                     .Where(p => p.City == cityName)
                                     .GroupBy(grp => new { grp.City, grp.Action })
                                     .Select(g => new { g.Key.City, g.Key.Action }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<City>> GetCities(string countryCode, int minPopulation = 0)
+        {
+            try
+            {
+                return await _context.Cities
+                                    .Where(p => p.CountryCode == "FR" && p.Population >= 15000)
+                                    .ToListAsync();
             }
             catch (Exception ex)
             {
