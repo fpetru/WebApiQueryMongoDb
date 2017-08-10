@@ -25,14 +25,14 @@ namespace WebApiQueryMongoDb.Controllers
         // GET: api/values
         [NoCache]
         [HttpGet]
-        public Task<IEnumerable<City>> Get()
+        public Task<IEnumerable<object>> Get()
         {
             return GetCitiesInternal();
         }
 
-        private async Task<IEnumerable<City>> GetCitiesInternal()
+        private async Task<IEnumerable<object>> GetCitiesInternal()
         {
-            return await _travelItemRepository.GetCities("FR");
+            return await _travelItemRepository.GetCitiesLinq2("FR", "");
         }
     }
 }

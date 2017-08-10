@@ -1,12 +1,13 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace WebApiQueryMongoDb.Model
 {
     public class City
     {
         [BsonId]
-        public Object Id { get; set; }
+        public ObjectId Id { get; set; }
         public int GeoNameId { get; set; }
         public string Name { get; set; }
         public string AsciiName { get; set; }

@@ -16,7 +16,7 @@ namespace WebApiQueryMongoDb.Data
                 _database = client.GetDatabase(settings.Value.Database);
         }
 
-        public IMongoQueryable<TravelItem> TravelItems
+        public IMongoQueryable<TravelItem> TravelItemsLinq
         {
             get
             {
@@ -24,11 +24,27 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
-        public IMongoQueryable<City> Cities
+        public IMongoCollection<TravelItem> TravelItems
+        {
+            get
+            {
+                return _database.GetCollection<TravelItem>("WikiVoyage");
+            }
+        }
+
+        public IMongoQueryable<City> CitiesLinq
         {
             get
             {
                 return _database.GetCollection<City>("Cities").AsQueryable<City>();
+            }
+        }
+
+        public IMongoCollection<City> Cities
+        {
+            get
+            {
+                return _database.GetCollection<City>("Cities");
             }
         }
     }
