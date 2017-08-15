@@ -9,6 +9,7 @@ using WebApiQueryMongoDb.Interfaces;
 using WebApiQueryMongoDb.Model;
 using MongoDB.Bson;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace WebApiQueryMongoDb.Data
 {
@@ -75,8 +76,7 @@ namespace WebApiQueryMongoDb.Data
             {
                 var filterBuilder = Builders<City>.Filter;
                 var filter = filterBuilder.Eq(x => x.CountryCode, countryCode)
-                                & filterBuilder.Gte(x => x.Population, minPopulation)
-                                & filterBuilder.Gte(x => x.Id, ObjectId.Parse("58fc8ae631a8a6f8d000f9c3"));
+                                & filterBuilder.Gte(x => x.Population, minPopulation);
 
                 var query = _context.Cities.Find(filter)
                                             .SortByDescending(p => p.Id)
@@ -132,42 +132,30 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
-        public async Task<IEnumerable<object>> GetCitiesInitialLinq(string countryCode, int minPopulation = 0)
+        private Expression<Func<City, bool>> GetConditions(string countryCode, string lastBsonId, int minPopulation = 0)
         {
-            try
-            {
-                var query = _context.CitiesLinq
-                                    .Where(x => x.CountryCode == countryCode
-                                                && x.Population >= minPopulation)
-                                    .OrderByDescending(x => x.Id)
-                                    .Take(200);
+            Expression<Func<City, bool>> conditions = (x => x.CountryCode == countryCode
+                                                        && x.Population >= minPopulation);
 
-                var items = await query.ToListAsync();
-                return items.Select(x => new
-                {
-                    BsonId = x.Id.ToString(),
-                    Timestamp = x.Id.Timestamp,
-                    ServerUpdatedOn = x.Id.CreationTime,
-                    x.Name,
-                    x.CountryCode,
-                    x.Population
-                });
-            }
-            catch (Exception ex)
+            ObjectId id;
+            if (string.IsNullOrEmpty(lastBsonId) && ObjectId.TryParse(lastBsonId, out id))
             {
-                // log or manage the exception
-                throw ex;
+                conditions = (x => x.CountryCode == countryCode
+                                && x.Population >= minPopulation
+                                && x.Id < id);
             }
+
+            return conditions;
+
         }
 
         public async Task<IEnumerable<object>> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0)
         {
+
             try
             {
                 var query = _context.CitiesLinq
-                                    .Where(x => x.CountryCode == countryCode
-                                             && x.Population >= minPopulation
-                                             && x.Id <= ObjectId.Parse(lastBsonId))
+                                    .Where(GetConditions(countryCode, lastBsonId, minPopulation))
                                     .OrderByDescending(x => x.Id)
                                     .Take(200);
                 var items = await query.ToListAsync();
