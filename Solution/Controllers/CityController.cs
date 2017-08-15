@@ -32,7 +32,7 @@ namespace WebApiQueryMongoDb.Controllers
 
         private async Task<IEnumerable<object>> GetCitiesInternal()
         {
-            return await _travelItemRepository.GetCitiesLinq2("FR", "");
+            return await _travelItemRepository.GetCitiesInitialLinq("FR");
         }
     }
 }

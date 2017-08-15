@@ -69,54 +69,89 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
-        public async Task<IEnumerable<City>> GetCities(string countryCode, int minPopulation = 0)
+        public async Task<IEnumerable<object>> GetCitiesInitial(string countryCode, int minPopulation = 0)
         {
-            var sort = Builders<City>.Sort.Ascending("Name");
-            var options = new FindOptions<City, City>
-            {
-                // Get 200 docs at a time
-                BatchSize = 200,
-                Sort = sort
-            };
-
             try
             {
-                using (var cursor = await _context.Cities.FindAsync(x => x.CountryCode == countryCode 
-                                                                       && x.Population >= minPopulation
-                                                                   , options))
+                var filterBuilder = Builders<City>.Filter;
+                var filter = filterBuilder.Eq(x => x.CountryCode, countryCode)
+                                & filterBuilder.Gte(x => x.Population, minPopulation)
+                                & filterBuilder.Gte(x => x.Id, ObjectId.Parse("58fc8ae631a8a6f8d000f9c3"));
+
+                var query = _context.Cities.Find(filter)
+                                            .SortByDescending(p => p.Id)
+                                            .Limit(200);
+                var items = await query.ToListAsync();
+
+                return items.Select(x => new
                 {
-                    // Retrieve just first batch of docs
-                    if (await cursor.MoveNextAsync())
-                    {
-                        return cursor.Current;
-                    }
-                }
+                    BsonId = x.Id.ToString(),
+                    Timestamp = x.Id.Timestamp,
+                    ServerUpdatedOn = x.Id.CreationTime,
+                    x.Name,
+                    x.CountryCode,
+                    x.Population
+                });
             }
             catch (Exception ex)
             {
                 // log or manage the exception
                 throw ex;
             }
-
-            return new List<City>();
         }
 
-        public async Task<IEnumerable<City>> GetCitiesLinq(string countryCode, string lastId, int minPopulation = 0)
+        public async Task<IEnumerable<object>> GetCities(string countryCode, string lastBsonId, int minPopulation = 0)
         {
-            // ObjectId lastBsonId = new ObjectId(lastId);
-
             try
             {
-                List<City> items = await _context.CitiesLinq
+                var filterBuilder = Builders<City>.Filter;
+                var filter = filterBuilder.Eq(x => x.CountryCode, countryCode)
+                                & filterBuilder.Gte(x => x.Population, minPopulation)
+                                & filterBuilder.Lte(x => x.Id, ObjectId.Parse(lastBsonId));
+
+                var query = _context.Cities.Find(filter)
+                                            .SortByDescending(p => p.Id)
+                                            .Limit(200);
+
+                var items = await query.ToListAsync();
+
+                return items.Select(x => new
+                {
+                    BsonId = x.Id.ToString(),
+                    Timestamp = x.Id.Timestamp,
+                    ServerUpdatedOn = x.Id.CreationTime,
+                    x.Name,
+                    x.CountryCode,
+                    x.Population
+                });
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<object>> GetCitiesInitialLinq(string countryCode, int minPopulation = 0)
+        {
+            try
+            {
+                var query = _context.CitiesLinq
                                     .Where(x => x.CountryCode == countryCode
-                                             && x.Population >= minPopulation)
-                                    /*&& x.Id == ObjectId.Parse("58fc8ae631a8a6f8d000f9c3"*/
-                                    /*&& x.Id >= lastBsonId*/
-                                    // .OrderByDescending(x => x.Id)    
-                                    // .Take(200)
-                                    // .Select()
-                                    .ToListAsync();
-                return items;
+                                                && x.Population >= minPopulation)
+                                    .OrderByDescending(x => x.Id)
+                                    .Take(200);
+
+                var items = await query.ToListAsync();
+                return items.Select(x => new
+                {
+                    BsonId = x.Id.ToString(),
+                    Timestamp = x.Id.Timestamp,
+                    ServerUpdatedOn = x.Id.CreationTime,
+                    x.Name,
+                    x.CountryCode,
+                    x.Population
+                });
             }
             catch (Exception ex)
             {
@@ -125,21 +160,21 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
-        public async Task<IEnumerable<object>> GetCitiesLinq2(string countryCode, string lastId, int minPopulation = 0)
+        public async Task<IEnumerable<object>> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0)
         {
             try
             {
-                var items = await _context.CitiesLinq
+                var query = _context.CitiesLinq
                                     .Where(x => x.CountryCode == countryCode
                                              && x.Population >= minPopulation
-                                             && x.Id >= ObjectId.Parse("58fc8ae631a8a6f8d000f9c3"))
+                                             && x.Id <= ObjectId.Parse(lastBsonId))
                                     .OrderByDescending(x => x.Id)
-                                    .Take(1)
-                                    .ToListAsync();
+                                    .Take(200);
+                var items = await query.ToListAsync();
 
                 return items.Select(x => new
                                     {
-                                        Id3 = x.Id.ToString(),
+                                        BsonId = x.Id.ToString(),
                                         Timestamp = x.Id.Timestamp,
                                         ServerUpdatedOn = x.Id.CreationTime,
                                         x.Name,
