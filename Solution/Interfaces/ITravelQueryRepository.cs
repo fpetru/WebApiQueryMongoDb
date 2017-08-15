@@ -15,6 +15,6 @@ namespace WebApiQueryMongoDb.Interfaces
         Task<IEnumerable<object>> GetCitiesInitial(string countryCode, int minPopulation = 0);
         Task<IEnumerable<object>> GetCities(string countryCode, string lastBsonId, int minPopulation = 0);
 
-        Task<IEnumerable<object>> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0);
+        Task<object> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0);
     }
 }

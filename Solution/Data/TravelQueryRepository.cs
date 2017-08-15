@@ -132,6 +132,8 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
+        // building where clause
+        //
         private Expression<Func<City, bool>> GetConditions(string countryCode, string lastBsonId, int minPopulation = 0)
         {
             Expression<Func<City, bool>> conditions = (x => x.CountryCode == countryCode
@@ -149,18 +151,19 @@ namespace WebApiQueryMongoDb.Data
 
         }
 
-        public async Task<IEnumerable<object>> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0)
+        public async Task<object> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0)
         {
 
             try
             {
-                var query = _context.CitiesLinq
+                var items = await _context.CitiesLinq
                                     .Where(GetConditions(countryCode, lastBsonId, minPopulation))
                                     .OrderByDescending(x => x.Id)
-                                    .Take(200);
-                var items = await query.ToListAsync();
+                                    .Take(200)
+                                    .ToListAsync();
 
-                return items.Select(x => new
+                // select just few elements
+                var returnItems = items.Select(x => new
                                     {
                                         BsonId = x.Id.ToString(),
                                         Timestamp = x.Id.Timestamp,
@@ -169,6 +172,17 @@ namespace WebApiQueryMongoDb.Data
                                         x.CountryCode,
                                         x.Population
                                     });
+
+                int countItems = await _context.CitiesLinq
+                                    .Where(GetConditions(countryCode, "", minPopulation))
+                                    .CountAsync();
+
+
+                return new
+                    {
+                        count = countItems,
+                        items = returnItems
+                    };
             }
             catch (Exception ex)
             {

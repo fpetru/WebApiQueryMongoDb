@@ -19,11 +19,10 @@ namespace WebApiQueryMongoDb.Controllers
 
         [NoCache]
         [HttpGet]
-        public async Task<IEnumerable<object>> Get(string countryCode, int? population, string lastId)
+        public async Task<object> Get(string countryCode, int? population, string lastId)
         {
-            IEnumerable<object> list = await _travelItemRepository
+            return await _travelItemRepository
                             .GetCitiesLinq(countryCode, lastId, population ?? 0);
-            return list;
         }
     }
 }
