@@ -2,11 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/Solution/bin/Debug/netcoreapp1.1
-/Solution/obj
-/Solution/.vs/WebApiQueryMongoDb/v15/.suo
+/Solution/obj/
 /Solution/WebApiQueryMongoDb.csproj.user
 /Data/aa.log
-.vscode/tasks.json
-.vscode/launch.json
 action.todo
+.vscode/
+Solution/.vs/
+Solution/bin/
