@@ -1,3 +1,5 @@
+mongo localhost:27017/admin -u admin -p abc123! cleanData.js
+
 mongoimport --db TravelDb ^
             --collection WikiVoyage ^
             --type tsv ^
@@ -18,8 +20,19 @@ mongoimport --db TravelDb ^
             --username admin ^
             --password abc123! ^
             --authenticationDatabase admin ^
-            --numInsertionWorkers 4
+            --numInsertionWorkers 4	
 
-mongo localhost:27017/admin -u admin -p abc123! createIndex.js
+mongoimport --db TravelDb ^
+            --collection Countries ^
+            --type tsv ^
+            --fieldFile countries-with-regional-codes-fields.txt^
+            --file countries-with-regional-codes.tsv ^
+            --columnsHaveTypes^
+            --username admin ^
+            --password abc123! ^
+            --authenticationDatabase admin ^
+            --numInsertionWorkers 4	
+			
+mongo localhost:27017/admin -u admin -p abc123! createIndexAndProcessData.js
 
 pause
