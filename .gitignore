@@ -9,3 +9,4 @@ action.todo
 .vscode/
 Solution/.vs/
 Solution/bin/
+Data/countries-with-regional-codes-small.tsv

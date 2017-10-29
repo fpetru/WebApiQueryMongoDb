@@ -12,9 +12,6 @@ db.Cities.aggregate([
         $lookup: {from: "Countries", localField: "CountryCode", foreignField: "alpha-2", as: "Matched"}
     },
     {
-        $unwind: "$Matched"
-    },
-    {
       // fields you want to fetch 
       $project: {
         Name: "$AsciiName",  
@@ -23,9 +20,7 @@ db.Cities.aggregate([
         Longitude: "$Longitude",
         Population: "$Population",
         DigitalElevationModel: "$DigitalElevationModel",
-        Country:"$Matched.country-name",
-        Region:"$Matched.region-name",
-        SubRegion:"$Matched.sub-region",
+        Country: {$arrayElemAt: [ "$Matched", 0 ]},
         TimeZone: "$Timezone"
       }
     },
