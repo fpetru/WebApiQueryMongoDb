@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApiQueryMongoDb.Model;
-using MongoDB.Driver;
-using System;
 
 namespace WebApiQueryMongoDb.Interfaces
 {
@@ -16,5 +14,8 @@ namespace WebApiQueryMongoDb.Interfaces
         Task<IEnumerable<object>> GetCities(string countryCode, string lastBsonId, int minPopulation = 0);
 
         Task<object> GetCitiesLinq(string countryCode, string lastBsonId, int minPopulation = 0);
+        Task<object> GetJoinedTravelItems(string cityName, string action);
+
+        Task<IEnumerable<CityExtended>> GetCityExtendedList();
     }
 }

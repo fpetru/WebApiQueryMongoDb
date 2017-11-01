@@ -190,5 +190,42 @@ namespace WebApiQueryMongoDb.Data
                 throw ex;
             }
         }
+
+        public async Task<object> GetJoinedTravelItems(string cityName, string action)
+        {
+            try
+            {
+                var query = from city in _context.CitiesLinq
+                            join travelItem in _context.TravelItemsLinq
+                              on city.AsciiName equals travelItem.City
+                            select new
+                            {
+                                travelItem.Action,
+                                travelItem.City
+                            };
+
+                var items = await query.Take(200).ToListAsync();
+                return items.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<CityExtended>> GetCityExtendedList()
+        {
+            try
+            {
+                return await _context.CityExtendedLinq
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
     }
 }

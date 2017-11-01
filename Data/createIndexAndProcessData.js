@@ -41,7 +41,7 @@ db.Cities.aggregate([
       }
     },
     { 
-        $out : "CitiesNew" 
+        $out : "CitiesExtended" 
     }     
 ]);
 
