@@ -191,29 +191,6 @@ namespace WebApiQueryMongoDb.Data
             }
         }
 
-        public async Task<object> GetJoinedTravelItems(string cityName, string action)
-        {
-            try
-            {
-                var query = from city in _context.CitiesLinq
-                            join travelItem in _context.TravelItemsLinq
-                              on city.AsciiName equals travelItem.City
-                            select new
-                            {
-                                travelItem.Action,
-                                travelItem.City
-                            };
-
-                var items = await query.Take(200).ToListAsync();
-                return items.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                // log or manage the exception
-                throw ex;
-            }
-        }
-
         public async Task<IEnumerable<CityExtended>> GetCityExtendedList()
         {
             try
@@ -226,6 +203,37 @@ namespace WebApiQueryMongoDb.Data
                 // log or manage the exception
                 throw ex;
             }
+        }
+
+        public async Task<IEnumerable<object>> GetTravelItemsOfCityAsync(string cityName)
+        {
+            var query = from travelItem in _context.TravelItemsLinq
+                        join city in _context.CityExtendedLinq
+                           on travelItem.City equals city.Name
+                        into joinedItem
+                        where (travelItem.City == cityName)
+                        select new
+                        {
+                            Action = travelItem.Action,
+                            Name = travelItem.Name,
+                            FirstCityMatched = joinedItem.First(),
+                        };
+
+            return await query.Take(10).ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> GetTravelStat()
+        {
+            var groupTravelItemsByCityAndAction = _context.TravelItemsLinq
+                        .GroupBy(s => new { s.City, s.Action })
+                        .Select(n => new
+                        {
+                            Location = n.Key,
+                            Count = n.Count(),
+                            Latitude = n.Max(p=> p.Latitude),
+                            Longitude = n.Max(p => p.Longitude)
+                        });
+            return await groupTravelItemsByCityAndAction.ToListAsync();
         }
     }
 }

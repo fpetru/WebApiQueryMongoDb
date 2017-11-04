@@ -13,7 +13,7 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "Action using default controller - Change URL to /city or /travelquery" };
+            return new string[] { "Action using default controller - Change URL to /city or /travelquery (ex: http://localhost:61612/api/travelquery)" };
         }
     }
 }
