@@ -20,12 +20,8 @@ namespace WebApiQueryMongoDb.Controllers
 
         [NoCache]
         [HttpGet]
-        public Task<IEnumerable<TravelItem>> Get()
-        {
-            return GetTravelItemsInternal();
-        }
-
-        private async Task<IEnumerable<TravelItem>> GetTravelItemsInternal()
+        // GET api/TravelQuery
+        public async Task<IEnumerable<object>> Get()
         {
             return await _travelItemRepository.GetTravelItems();
         }
@@ -33,14 +29,9 @@ namespace WebApiQueryMongoDb.Controllers
         // GET api/TravelQuery/Paris?doAction=do
         [NoCache]
         [HttpGet("{city}")]
-        public Task<IEnumerable<TravelItem>> Get(string city, [FromQuery]string doAction)
+        public async Task<IEnumerable<TravelItem>> Get(string city, [FromQuery]string doAction)
         {
-            return GetTravelItemsInternal(city, doAction);
-        }
-
-        private async Task<IEnumerable<TravelItem>> GetTravelItemsInternal(string city, string action)
-        {
-            return await _travelItemRepository.GetTravelItems(city, action);
+            return await _travelItemRepository.GetTravelItems(city, doAction);
         }
     }
 }

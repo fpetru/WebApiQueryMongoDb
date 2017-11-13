@@ -55,5 +55,13 @@ namespace WebApiQueryMongoDb.Data
                 return _database.GetCollection<CityExtended>("CitiesExtended").AsQueryable<CityExtended>();
             }
         }
+
+        public IMongoCollection<CityExtended> CityExtended
+        {
+            get
+            {
+                return _database.GetCollection<CityExtended>("CitiesExtended");
+            }
+        }
     }
 }

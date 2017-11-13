@@ -207,8 +207,8 @@ namespace WebApiQueryMongoDb.Data
 
         public async Task<IEnumerable<object>> GetTravelItemsOfCityAsync(string cityName)
         {
-            var query = from travelItem in _context.TravelItemsLinq
-                        join city in _context.CityExtendedLinq
+            var query = from travelItem in _context.TravelItems.AsQueryable()
+                        join city in _context.CityExtended.AsQueryable()
                            on travelItem.City equals city.Name
                         into joinedItem
                         where (travelItem.City == cityName)
@@ -224,7 +224,7 @@ namespace WebApiQueryMongoDb.Data
 
         public async Task<IEnumerable<object>> GetTravelStat()
         {
-            var groupTravelItemsByCityAndAction = _context.TravelItemsLinq
+            var groupTravelItemsByCityAndAction = _context.TravelItems.AsQueryable()
                         .GroupBy(s => new { s.City, s.Action })
                         .Select(n => new
                         {
@@ -233,7 +233,22 @@ namespace WebApiQueryMongoDb.Data
                             Latitude = n.Max(p=> p.Latitude),
                             Longitude = n.Max(p => p.Longitude)
                         });
-            return await groupTravelItemsByCityAndAction.ToListAsync();
+
+            return await groupTravelItemsByCityAndAction.Take(100).ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> GetTravelDestinations(string cityName)
+        {
+            var groupTravelItemsByCity = _context.TravelItems.AsQueryable()
+                        .Where(city => string.IsNullOrEmpty(cityName) || city.City.Contains(cityName))
+                        .GroupBy(s => new { s.City })
+                        .Select(n => new
+                        {
+                            value = n.Key.City,
+                            data = n.Count()
+                        });
+
+            return await groupTravelItemsByCity.Take(100).ToListAsync();
         }
     }
 }
