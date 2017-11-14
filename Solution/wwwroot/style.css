@@ -155,9 +155,13 @@ a:hover { text-decoration: underline; }
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 }
 
-#searchfield { display: block; width: 100%; text-align: center; margin-bottom: 35px; }
+#part1 { display: block; width: 100%; text-align: center; margin-bottom: 35px; }
 
-#searchfield form {
+#part2 { display: block; width: 100%; text-align: center; margin-bottom: 35px; }
+
+#part3 { display: block; width: 100%; text-align: center; margin-bottom: 35px; }
+
+#part3 form {
   display: inline-block;
   background: #eeefed;
   padding: 0;
@@ -166,7 +170,7 @@ a:hover { text-decoration: underline; }
   border-radius: 3px;
   margin: 5px 0 0 0;
 }
-#searchfield form .biginput {
+#part3 form .biginput {
   width: 600px;
   height: 40px;
   padding: 0 10px 0 10px;
@@ -180,11 +184,9 @@ a:hover { text-decoration: underline; }
   -moz-transition: all 0.2s linear;
   transition: all 0.2s linear;
 }
-#searchfield form .biginput:focus {
+#part3 form .biginput:focus {
   color: #858585;
 }
-
-
 
 .flatbtn {
   -webkit-box-sizing: border-box;

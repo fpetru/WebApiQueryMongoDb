@@ -1,0 +1,58 @@
+﻿<!doctype html>
+<html lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="stylesheet" type="text/css" media="all" href="style.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <div id="w">
+        <div id="content">
+            <h1>WebApi queries in MongoDb with LINQ</h1>
+            <div id="part1">
+                <h1>
+                    <a href="http://www.qappdesign.com/search-best-places-mongodb-linq-netcore/" target="_blank">
+                        Part 1: How to search good places to travel
+                    </a>
+                </h1>
+                Find travel items from a city (ex: Paris): <a href="./api/TravelQuery/Paris?doAction=do" target="_blank">http://localhost:61612/api/TravelQuery/Paris?doAction=do</a>
+            </div>
+            <div id="part2">
+                <h1>
+                    <a href="http://www.qappdesign.com/paging-mongodb-avoid-poor-performance/" target="_blank">
+                        Part 2: Paging in MongoDB and query performance
+                    </a>
+                </h1>
+                Find cities from a country (ex: France): <a href="./api/city?countryCode=FR">http://localhost:61612/api/city?countryCode=FR</a>
+            </div>
+            <div id="part3">
+                <h1>
+                    <a href="http://www.qappdesign.com/mongodb-and-linq-how-to-aggregate-and-join-collections" target="_blank">
+                        Part 3: How to aggregate and join collections
+                     </a>
+                </h1>
+                Click on the link: <a href="./api/display/GroupBy?city=Paris" target="_blank">http://localhost:61612/api/display/GroupBy?city=Paris</a> or search for a city:
+                <form>
+                    <input type="text" name="inputValue" class="biginput" id="autocomplete">
+                </form>
+            </div><!-- @end #searchfield -->
+        </div><!-- @end #content -->
+    </div><!-- @end #w -->
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#autocomplete').autocomplete({
+            minLength: 1,
+            source: function (request, response) {
+                var webApiUrl = 'http://localhost:61612/api/display/GroupBy'
+                    + '?city=' + request.term;
+                $.getJSON(webApiUrl, request, function (data, status, xhr) {
+                    response(data);
+                });
+            },
+        });
+    });
+</script>
