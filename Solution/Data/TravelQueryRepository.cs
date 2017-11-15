@@ -222,16 +222,17 @@ namespace WebApiQueryMongoDb.Data
             return await query.Take(10).ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> GetTravelStat()
+        public async Task<IEnumerable<object>> GetTravelItemStat()
         {
             var groupTravelItemsByCityAndAction = _context.TravelItems.AsQueryable()
+                        .Where(s => s.City == "Paris" || s.City == "Berlin")
                         .GroupBy(s => new { s.City, s.Action })
                         .Select(n => new
                         {
                             Location = n.Key,
                             Count = n.Count(),
-                            Latitude = n.Max(p=> p.Latitude),
-                            Longitude = n.Max(p => p.Longitude)
+                            MaxPrice = n.Max(p => p.Price),
+                            MinPrice = n.Min(p => p.Price)
                         });
 
             return await groupTravelItemsByCityAndAction.Take(100).ToListAsync();

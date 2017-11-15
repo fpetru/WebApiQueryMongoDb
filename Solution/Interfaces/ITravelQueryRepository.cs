@@ -16,7 +16,7 @@ namespace WebApiQueryMongoDb.Interfaces
 
         Task<IEnumerable<CityExtended>> GetCityExtendedList();
 
-        Task<IEnumerable<object>> GetTravelStat();
+        Task<IEnumerable<object>> GetTravelItemStat();
         Task<IEnumerable<object>> GetTravelItemsOfCityAsync(string cityName);
         Task<IEnumerable<object>> GetTravelDestinations(string cityName);
     }
